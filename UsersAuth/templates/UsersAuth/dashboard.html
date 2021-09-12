@@ -1,0 +1,65 @@
+{%  extends 'UsersAuth/main.html' %}
+{% load static %}
+
+{% block content %}
+<!-- 
+<form action="" method="POST">
+  {% csrf_token %}
+<div style="margin-top: 10%;">
+  <h1 style="margin-left: 2%;">Upload File</h1>
+
+<div class="container m-3" >
+  <h3>Objet</h3>
+  <input type="text" name="description">
+  <hr>
+  <div class="input-group">
+    <div class="custom-file">
+      <input type="file" class="custom-file-input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" name="document">
+      <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+    </div>
+    <div class="input-group-append">
+      <button class="btn btn-outline-secondary" type="submit" id="inputGroupFileAddon04" >Enoyer</button>
+    </div>
+  </div>
+</div>
+
+</div>
+</form> -->
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <div style="margin-top: 10%;">
+    <h1 style="margin-left: 2%;">Upload File</h1>
+  
+  <div class="container m-3" >
+    <h3>Objet</h3>
+    {{ form.description }}
+    <hr>
+    <div class="input-group">
+      <div class="custom-file">
+
+  {{ form.document }}
+  <!-- <input type="file" class="custom-file-input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" name="document"> -->
+  <label class="custom-file-label" for="id_document">Choose file</label>
+</div>
+<div class="input-group-append">
+  <button class="btn btn-outline-secondary" type="submit" id="inputGroupFileAddon04" >Enoyer</button>
+</div>
+</div>
+</div>
+
+</div>
+
+
+</form>
+
+<script>
+const inp =document.getElementsByName('document')[0];
+document.getElementsByName('document')[0].aria-describedby = "inputGroupFileAddon04";
+
+</script>
+
+<p><a href="{% url 'home' %}">Return to home</a></p>
+
+{% endblock %}
