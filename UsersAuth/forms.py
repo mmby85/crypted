@@ -2,7 +2,7 @@ from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-from .models import Document
+from .models import Document, Message
 
 
 class CreateUserForm(UserCreationForm):
@@ -14,3 +14,9 @@ class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
         fields = ('description', 'document', )
+
+class MessageForm(forms.ModelForm):
+    class Meta:
+
+        model = Message
+        fields = ('sento','description', 'document', 'sentfrom')

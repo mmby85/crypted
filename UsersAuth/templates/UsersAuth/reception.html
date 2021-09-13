@@ -1,0 +1,16 @@
+{%  extends 'UsersAuth/main.html' %}
+{% load static %}
+
+{% block content %}
+
+<div>
+  <ul>
+    {% for msg in msgs %}
+
+        <li>{{ msg }}</li>
+        
+    {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}

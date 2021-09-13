@@ -1,4 +1,4 @@
-from UsersAuth.models import Document
+from UsersAuth.models import Document, Message
 from typing import ContextManager
 from django.shortcuts import render, redirect 
 from django.http import HttpResponse
@@ -6,15 +6,15 @@ from django.forms import inlineformset_factory
 from django.contrib.auth.forms import UserCreationForm
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
-
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.contrib.auth import SESSION_KEY, authenticate, login, logout
 
 from django.contrib import messages
 
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
-from .forms import CreateUserForm, DocumentForm
+from .forms import CreateUserForm, DocumentForm, MessageForm
 
 
 def registerPage(request):
@@ -60,7 +60,7 @@ def logoutUser(request):
 
 
 @login_required(login_url='login')
-def home(request):
+def home1(request):
 
 	if request.method == 'POST':
 		form = DocumentForm(request.POST, request.FILES)
@@ -71,3 +71,34 @@ def home(request):
 		form = DocumentForm()
 
 	return render(request,'UsersAuth/dashboard.html',  {'form': form})
+
+
+@login_required(login_url='login')
+def home(request):
+
+	if request.method == 'POST':
+		form = MessageForm(request.POST, request.FILES)
+		if form.is_valid():
+			print(form)
+			print(dir(form))
+			# form.save()
+			recipe = form.save(commit=False)
+			recipe.sentfrom = request.user
+			recipe.save()
+			return redirect('home')
+	else:
+		form = MessageForm()
+
+
+	return render(request,'UsersAuth/dashboard.html',  {'form': form })
+
+
+
+@login_required(login_url='login')
+def reception(request):
+	user_id = User.objects.get( username = request.user).id
+	msgs = Message.objects.filter(sento = user_id).values_list()
+
+	print(msgs)
+
+	return render(request,'UsersAuth/reception.html',  {'msgs': msgs})

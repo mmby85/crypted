@@ -33,6 +33,9 @@
     <h1 style="margin-left: 2%;">Upload File</h1>
   
   <div class="container m-3" >
+    <h3>Send To</h3>
+    {{ form.sento }}
+    <hr>
     <h3>Objet</h3>
     {{ form.description }}
     <hr>
@@ -40,6 +43,7 @@
       <div class="custom-file">
 
   {{ form.document }}
+
   <!-- <input type="file" class="custom-file-input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" name="document"> -->
   <label class="custom-file-label" for="id_document">Choose file</label>
 </div>
@@ -61,5 +65,6 @@ document.getElementsByName('document')[0].aria-describedby = "inputGroupFileAddo
 </script>
 
 <p><a href="{% url 'home' %}">Return to home</a></p>
+
 
 {% endblock %}
