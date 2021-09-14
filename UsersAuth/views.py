@@ -11,13 +11,30 @@ from django.contrib.auth import SESSION_KEY, authenticate, login, logout
 
 from django.contrib import messages
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.utils.decorators import method_decorator
+import datetime
 
 # Create your views here.
 from .forms import CreateUserForm, DocumentForm, MessageForm
 
+def adminpage(request):
+	if request.user.is_superuser :
+		if request.method == "POST" :
+			try:
+				User.objects.create(username= request.POST['username'],password= request.POST['password'],email= request.POST['email'] )
+			except:
+				return redirect('adminpage')
+
+			return redirect('adminpage')
+
+		return render(request,'UsersAuth/admin.html')
+	else :
+		return redirect('home')
+	
 
 def registerPage(request):
+	
 	if request.user.is_authenticated:
 		return redirect('home')
 	else:
@@ -36,7 +53,9 @@ def registerPage(request):
 		return render(request, 'UsersAuth/register.html', context)
 
 def loginPage(request):
-	if request.user.is_authenticated:
+	if request.user.is_superuser :
+		return redirect('/adminpage/')
+	elif request.user.is_authenticated:
 		return redirect('/home/')
 	else:
 		if request.method == 'POST':
@@ -75,6 +94,8 @@ def home1(request):
 
 @login_required(login_url='login')
 def home(request):
+	if request.user.is_superuser :
+		return redirect('/adminpage/')
 
 	if request.method == 'POST':
 		form = MessageForm(request.POST, request.FILES)
@@ -97,8 +118,12 @@ def home(request):
 @login_required(login_url='login')
 def reception(request):
 	user_id = User.objects.get( username = request.user).id
-	msgs = Message.objects.filter(sento = user_id).values_list()
+	msgs = Message.objects.filter(sento = user_id)
+	
+	filelink = [[i+1, u.sentfrom , u.document.name, u.uploaded_at.strftime("%b %d %Y %H:%M:%S")] for i,u in enumerate(msgs)]
+	
+	context = {
+		'data' : filelink
+	}
 
-	print(msgs)
-
-	return render(request,'UsersAuth/reception.html',  {'msgs': msgs})
+	return render(request,'UsersAuth/reception.html',  context)

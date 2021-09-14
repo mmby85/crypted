@@ -1,0 +1,113 @@
+{%  extends 'UsersAuth/main.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-5">
+  <form action="" method="POST" autocomplete="off">
+    {% csrf_token %}
+<h1 style="margin-bottom: 15px;">Add Users</h1>
+
+  <div class="row">
+    <div class="col-sm">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-default">Username</span>
+        </div>
+        <input type="text" autocomplete="false" class="form-control" name="username" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+      </div>
+      
+    </div>
+    <div class="col-sm">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-default">Password</span>
+        </div>
+        <input type="password" autocomplete="new-password" name="password"  class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+      </div>
+      
+    </div>
+    <div class="col-sm">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-default">E-mail</span>
+        </div>
+        <input type="email" autocomplete="off" name="email" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+      </div>
+      
+    </div>
+  </div>
+
+  <div style="left: 93%;position: relative ;margin-top: 20px;">
+    <button type="submit" class="btn btn-primary" >Ajouter</button>
+  </div>
+
+</form>
+</div>
+
+
+
+
+<div class="container mt-5">
+  <h1 style="margin-bottom: 15px;">Certificates</h1>
+  <br>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">First</th>
+        <th scope="col">Last</th>
+        <th scope="col">Handle</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">1</th>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+      </tr>
+      <tr>
+        <th scope="row">2</th>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+      </tr>
+      <tr>
+        <th scope="row">3</th>
+        <td>Larry</td>
+        <td>the Bird</td>
+        <td>@twitter</td>
+      </tr>
+    </tbody>
+  </table>
+  <br>
+
+
+
+  
+<nav aria-label="...">
+  <ul class="pagination">
+    <li class="page-item disabled">
+      <a class="page-link" href="#" tabindex="-1">Previous</a>
+    </li>
+    <li class="page-item active"><a class="page-link" href="#">1<span class="sr-only">(current)</span></a></li>
+    <li class="page-item">
+      <a class="page-link" href="#">2</a>
+    </li>
+    <li class="page-item"><a class="page-link" href="#">3</a></li>
+    <li class="page-item">
+      <a class="page-link" href="#">Next</a>
+    </li>
+  </ul>
+</nav>
+
+
+</div>
+
+
+
+
+
+
+{% endblock %}

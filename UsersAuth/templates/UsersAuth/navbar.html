@@ -15,16 +15,17 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav">
-      <li class="nav-item active">
+    <ul class="navbar-nav" >
+      <!-- <li class="nav-item active">
         <a class="nav-link" href="{% url 'home' %}">Dashboard</a>
-      </li>
+      </li> -->
 
     </ul>
   </div>
 
   <span class="hello-msg">Hello, {{request.user}}</span>
-  <span ><a  class="hello-msg" href="{% url 'reception' %}">MailBox</a></span>
+  <span ><a  class="hello-msg" href="{% url 'home' %}">Envoyer</a></span>
+  <span ><a  class="hello-msg" href="{% url 'reception' %}">Reçu</a></span>
   <span ><a  class="hello-msg" href="{% url 'logout' %}">Logout</a></span>
 
 </nav>

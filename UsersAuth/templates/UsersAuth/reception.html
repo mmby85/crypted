@@ -3,14 +3,41 @@
 
 {% block content %}
 
-<div>
-  <ul>
-    {% for msg in msgs %}
+  
+<div class="container mt-5">
+  <h1 style="margin-bottom: 15px;">Recived Files</h1>
+  <br>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">From</th>
+        <th scope="col">File Name</th>
+        <th scope="col">Recived At</th>
+      </tr>
+    </thead>
+    <tbody>
+   
+        {% for d in data %}
+        <tr>
+          {% for elm in d %}
+        <td>
+         
+         {{ elm }} 
 
-        <li>{{ msg }}</li>
-        
-    {% endfor %}
-    </ul>
-</div>
+         {% if elm	 == d.2 %}
+         &nbsp;&nbsp;&nbsp; <a href="../{{ elm }}">open</a>
+          {% endif %}
+
+        </td>
+        {% endfor %}
+      </tr>
+        {% endfor %}
+
+ 
+      
+    </tbody>
+  </table>
+ 
 
 {% endblock %}

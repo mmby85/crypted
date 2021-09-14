@@ -17,6 +17,6 @@ class Message(models.Model):
         on_delete=models.CASCADE,
     )
     description = models.CharField(max_length=255, blank=True)
-    document = models.FileField(upload_to='documents/')
+    document = models.FileField(upload_to='static/images')
     sentfrom = models.CharField(max_length=255, default=None,blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
