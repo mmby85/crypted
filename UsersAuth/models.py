@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 
-
+folder = 'static/images/'
 
 
 class Document(models.Model):
@@ -17,6 +17,6 @@ class Message(models.Model):
         on_delete=models.CASCADE,
     )
     description = models.CharField(max_length=255, blank=True)
-    document = models.FileField(upload_to='static/images')
+    document = models.FileField(upload_to= folder )
     sentfrom = models.CharField(max_length=255, default=None,blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)

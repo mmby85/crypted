@@ -19,5 +19,7 @@ def encrypt (file_name,key):
         data.write(to_write)
     data.close()
    
-       
+def decrypt():
+    pass
+
 encrypt('file.txt',key)

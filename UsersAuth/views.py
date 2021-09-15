@@ -14,6 +14,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.decorators import method_decorator
 import datetime
+from .crypt import encrypt, mdp
 
 # Create your views here.
 from .forms import CreateUserForm, DocumentForm, MessageForm
@@ -100,12 +101,31 @@ def home(request):
 	if request.method == 'POST':
 		form = MessageForm(request.POST, request.FILES)
 		if form.is_valid():
-			print(form)
-			print(dir(form))
+			# encrypt(request.FILES['document'],mdp(16))
+			# fencrypt = request.FILES['document'].name
 			# form.save()
 			recipe = form.save(commit=False)
 			recipe.sentfrom = request.user
+
+			request.FILES['document'].open('w+')
+			text = request.FILES['document'].read()
+
+			mp = mdp(16)
+			text = encrypt(text,mp)
+			request.FILES['document'].seek(0)
+			request.FILES['document'].write(text)
+			request.FILES['document'].name = request.FILES['document'].name + ".enc"
+
+
+			instance = Message(document = request.FILES['document'])
+			
+			recipe.document = instance.document
 			recipe.save()
+			# mp = mdp(16)
+			# encrypt(fencrypt,mp)
+			f = open('pass.txt', 'w')
+			f.write(str(mp))
+			f.close()
 			return redirect('home')
 	else:
 		form = MessageForm()
