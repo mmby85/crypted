@@ -2,3 +2,4 @@ document/*
 crypted/settings.py
 static/images/*
 /ssl
+crypto.sqlite3
