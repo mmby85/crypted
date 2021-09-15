@@ -1,8 +1,7 @@
-#logo{
-	}
-
 	body{
 		background-color: #ebeff5;
+		display: block;
+
 	}
 
 
@@ -22,12 +21,13 @@
 	@import url("https://fonts.googleapis.com/css?family=Roboto:400,400i,700");
 
 	body {
-	  display: flex;
+		
 	  justify-content: center;
 	  align-items: center;
 	  height: 100vh;
 	  font-family: Roboto, sans-serif;
 	  background: #eceffc;
+
 	}
 	
 	.upload {

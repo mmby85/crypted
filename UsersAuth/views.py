@@ -1,4 +1,4 @@
-from UsersAuth.models import Document, Message
+from UsersAuth.models import Message
 from typing import ContextManager
 from django.shortcuts import render, redirect 
 from django.http import HttpResponse
@@ -17,7 +17,7 @@ import datetime
 from .crypt import encrypt, mdp
 
 # Create your views here.
-from .forms import CreateUserForm, DocumentForm, MessageForm
+from .forms import CreateUserForm, MessageForm
 
 def adminpage(request):
 	if request.user.is_superuser :
@@ -32,26 +32,6 @@ def adminpage(request):
 		return render(request,'UsersAuth/admin.html')
 	else :
 		return redirect('home')
-	
-
-def registerPage(request):
-	
-	if request.user.is_authenticated:
-		return redirect('home')
-	else:
-		form = CreateUserForm()
-		if request.method == 'POST':
-			form = CreateUserForm(request.POST)
-			if form.is_valid():
-				form.save()
-				user = form.cleaned_data.get('username')
-				messages.success(request, 'Account was created for ' + user)
-
-				return redirect('login')
-			
-
-		context = {'form':form}
-		return render(request, 'UsersAuth/register.html', context)
 
 def loginPage(request):
 	if request.user.is_superuser :
@@ -78,19 +58,6 @@ def logoutUser(request):
 	logout(request)
 	return redirect('login')
 
-
-@login_required(login_url='login')
-def home1(request):
-
-	if request.method == 'POST':
-		form = DocumentForm(request.POST, request.FILES)
-		if form.is_valid():
-			form.save()
-			return redirect('home')
-	else:
-		form = DocumentForm()
-
-	return render(request,'UsersAuth/dashboard.html',  {'form': form})
 
 
 @login_required(login_url='login')
