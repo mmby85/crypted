@@ -1,4 +1,4 @@
-from UsersAuth.models import Message
+from UsersAuth.models import Message, crypto
 from typing import ContextManager
 from django.shortcuts import render, redirect 
 from django.http import HttpResponse
@@ -15,21 +15,57 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.decorators import method_decorator
 import datetime
 from .crypt import encrypt, mdp
-
+from UsersAuth.certifgen import gen_openssl
 # Create your views here.
-from .forms import CreateUserForm, MessageForm
+from .forms import CreateUserForm, MessageForm, CeritfForm
 
+@login_required(login_url='login')
 def adminpage(request):
+
+	try:
+		adduser = request.POST['adduser'] == "True"
+	except:
+		adduser = False
+
+	try:
+		gencertif =	request.POST['gencertif'] == "True" 
+	except:
+		gencertif = False
+
 	if request.user.is_superuser :
-		if request.method == "POST" :
+		if request.method == "POST" and adduser  :
 			try:
-				User.objects.create(username= request.POST['username'],password= request.POST['password'],email= request.POST['email'] )
+				tempuser = User.objects.create(username= request.POST['username'],email= request.POST['email'] )
+				tempuser.set_password(request.POST['password'])
+				tempuser.save()
 			except:
 				return redirect('adminpage')
 
 			return redirect('adminpage')
 
-		return render(request,'UsersAuth/admin.html')
+		elif request.method == "POST" and gencertif :
+			cert , key , pkey = gen_openssl()
+			# try:
+				
+			tempuser = crypto.objects.create(user  = User.objects.get(id =  request.POST['user']))
+			cert , key , pkey = gen_openssl()
+			tempuser.certif.name = f"certificate_{tempuser.user.username}.cert"
+			p = tempuser.certif.open("w")
+			
+			p.write(cert.decode("utf-8"))
+			p.close()
+			tempuser.pvkey = key
+			tempuser.pubkey = pkey
+			tempuser.save()
+			# except:
+			# 	return redirect('adminpage')
+
+			return redirect('adminpage')
+		else:
+			form = CreateUserForm()
+			certif = CeritfForm()
+
+		return render(request,'UsersAuth/admin.html', context={ "certif":certif})
 	else :
 		return redirect('home')
 
@@ -62,9 +98,6 @@ def logoutUser(request):
 
 @login_required(login_url='login')
 def home(request):
-	if request.user.is_superuser :
-		return redirect('/adminpage/')
-
 	if request.method == 'POST':
 		form = MessageForm(request.POST, request.FILES)
 		if form.is_valid():
@@ -84,9 +117,10 @@ def home(request):
 			request.FILES['document'].name = request.FILES['document'].name + ".enc"
 
 
-			instance = Message(document = request.FILES['document'])
+			instance = Message(document = request.FILES['document'], password = mp )
 			
 			recipe.document = instance.document
+			recipe.password = instance.password
 			recipe.save()
 			# mp = mdp(16)
 			# encrypt(fencrypt,mp)

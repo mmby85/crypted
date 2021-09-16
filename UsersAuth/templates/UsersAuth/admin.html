@@ -6,6 +6,7 @@
 <div class="container mt-5">
   <form action="" method="POST" autocomplete="off">
     {% csrf_token %}
+    <input type="hidden" name="adduser" value="True">
 <h1 style="margin-bottom: 15px;">Add Users</h1>
 
   <div class="row">
@@ -47,61 +48,35 @@
 
 
 
-
-<div class="container mt-5">
-  <h1 style="margin-bottom: 15px;">Certificates</h1>
-  <br>
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">First</th>
-        <th scope="col">Last</th>
-        <th scope="col">Handle</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
-      </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Jacob</td>
-        <td>Thornton</td>
-        <td>@fat</td>
-      </tr>
-      <tr>
-        <th scope="row">3</th>
-        <td>Larry</td>
-        <td>the Bird</td>
-        <td>@twitter</td>
-      </tr>
-    </tbody>
-  </table>
-  <br>
-
-
-
+  <div class="container mt-5">
+    <form action="" method="POST" autocomplete="off">
+      {% csrf_token %}
+      <input type="hidden" name="gencertif" value="True">
+      <h1 style="margin-bottom: 15px;">Certificates</h1>
+      <br>
   
-<nav aria-label="...">
-  <ul class="pagination">
-    <li class="page-item disabled">
-      <a class="page-link" href="#" tabindex="-1">Previous</a>
-    </li>
-    <li class="page-item active"><a class="page-link" href="#">1<span class="sr-only">(current)</span></a></li>
-    <li class="page-item">
-      <a class="page-link" href="#">2</a>
-    </li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item">
-      <a class="page-link" href="#">Next</a>
-    </li>
-  </ul>
-</nav>
+    <div class="row">
+      <div class="col-sm">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroup-sizing-default">Username</span>
+          </div>
+              {{ certif.user }}
+        </div>
+        
+      </div>
 
+        
+      </div>
+        
+  
+    <div style="left: 83%;position: relative ;margin-top: 20px;">
+      <button type="submit" class="btn btn-primary" >Générer</button>
+      <button type="button" class="btn btn-primary" >Modifier</button>
+    </div>
+  
+  </form>
+  </div>
 
 </div>
 

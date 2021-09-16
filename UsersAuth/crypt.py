@@ -65,6 +65,6 @@ def decrypt(file_name,key):
 
 key = pad(mdp(AES.block_size),AES.block_size)
 # encrypt1("model.txt","3A.mSd/5[eBVbHPw")
-decrypt("static\images\grid_score1.xlsx.enc", b'4l7XLV*v[jQeAdB.')
+decrypt("letters.xlsx_EkIp0Qm.enc", b'bdL1]-r7pumTUo.F')
 
 

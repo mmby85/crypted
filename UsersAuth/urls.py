@@ -8,5 +8,4 @@ urlpatterns = [
 	path('adminpage/', views.adminpage, name="adminpage"),
 	path('reception/', views.reception, name="reception"),
     path('', views.home, name="home"),
-
 ]
