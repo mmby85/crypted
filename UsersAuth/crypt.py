@@ -1,8 +1,14 @@
 from random import *
+from types import new_class
+from OpenSSL import crypto
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+import binascii
 from base64 import b64decode, b64encode
 import getpass
+
 try:
     from .models import folder
 except:
@@ -60,6 +66,28 @@ def decrypt(file_name,key):
             return decrypted
         except:
             print("wrong password")
+
+def cypherpass(mp , key):
+    
+
+    pbkey1 = RSA.import_key(key) 
+
+    encryptor = PKCS1_OAEP.new(pbkey1)
+    encrypted = encryptor.encrypt(mp.encode("utf-8"))
+    
+    return binascii.hexlify(encrypted).decode('UTF-8')
+
+
+def decypherpass(mp , key):
+
+    try :
+        pvkey1 = RSA.import_key(key)
+        decryptor = PKCS1_OAEP.new(pvkey1)
+        decrypted = decryptor.decrypt(mp)
+    except os.error:
+        print("error", os.error)
+
+    return decrypted
 
 
 # key = pad(mdp(AES.block_size),AES.block_size)

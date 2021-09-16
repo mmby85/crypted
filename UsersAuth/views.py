@@ -14,10 +14,11 @@ from django.http import FileResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.decorators import method_decorator
 import datetime
-from .crypt import encrypt, mdp, decrypt
+from .crypt import encrypt, mdp, decrypt, decypherpass, cypherpass
 from UsersAuth.certifgen import gen_openssl
 # Create your views here.
 from .forms import CreateUserForm, MessageForm, CeritfForm
+
 
 @login_required(login_url='login')
 def adminpage(request):
@@ -57,8 +58,8 @@ def adminpage(request):
 			# p.write(file.getvalue())
 			# p.close()
 			tempuser.certif.save(f"certificate_{tempuser.user.username}.cert", file)
-			tempuser.pvkey = key
-			tempuser.pubkey = pkey
+			tempuser.pvkey = key.decode("utf-8")
+			tempuser.pubkey = pkey.decode("utf-8")
 			tempuser.save()
 			# except:
 			# 	return redirect('adminpage')
@@ -121,7 +122,8 @@ def home(request):
 			instance = Message(document = request.FILES['document'], password = mp )
 			
 			recipe.document = instance.document
-			recipe.password = instance.password.decode("utf-8")
+			pubkey = crypto.objects.get( user = recipe.sento).pubkey
+			recipe.password = cypherpass(mp.decode("utf-8"), pubkey)
 
 			recipe.save()
 			# mp = mdp(16)
@@ -167,14 +169,15 @@ def dload(request):
 		import csv
 		# with open(filename + msgs.document.name.replace(folder, "").replace("enc", "") , "wb") as f:
 		# 	f.write(b'hello')
-
+		prvkey = crypto.objects.get( user = msgs.sento).pvkey
 		# obj = Message.objects.get(document = folder + list(request.GET.keys())[0])
 		# filename = obj.document.path
 		# file.write(msgs.document.read())
 		# FileResponse(file.getbuffer())
 		filename = msgs.document.name.replace(folder, "").replace(".enc", "")
 		fileext = re.search("\..+$",filename).group()
-		mp = msgs.password
+		print(msgs.password)
+		mp = decypherpass(msgs.password,prvkey )
 		
 		response = HttpResponse( content_type=f'{fileext}', headers={'Content-Disposition': f'attachment; filename={filename}'},)
 		decrypted = decrypt(msgs.document.path, mp.encode("utf-8"))
