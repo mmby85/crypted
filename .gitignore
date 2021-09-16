@@ -1,5 +1,6 @@
 document/*
 crypted/settings.py
 static/images/*
+static/certificates/*
 **/ssl
 *.sqlite3

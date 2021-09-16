@@ -1,4 +1,4 @@
-from UsersAuth.models import Message, crypto
+from UsersAuth.models import Message, crypto, folder
 from typing import ContextManager
 from django.shortcuts import render, redirect 
 from django.http import HttpResponse
@@ -8,13 +8,13 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.models import User
 from django.contrib.auth import SESSION_KEY, authenticate, login, logout
-
+import io
 from django.contrib import messages
-
+from django.http import FileResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.decorators import method_decorator
 import datetime
-from .crypt import encrypt, mdp
+from .crypt import encrypt, mdp, decrypt
 from UsersAuth.certifgen import gen_openssl
 # Create your views here.
 from .forms import CreateUserForm, MessageForm, CeritfForm
@@ -49,11 +49,14 @@ def adminpage(request):
 				
 			tempuser = crypto.objects.create(user  = User.objects.get(id =  request.POST['user']))
 			cert , key , pkey = gen_openssl()
-			tempuser.certif.name = f"certificate_{tempuser.user.username}.cert"
-			p = tempuser.certif.open("w")
-			
-			p.write(cert.decode("utf-8"))
-			p.close()
+			# tempuser.certif.name = f"certificate_{tempuser.user.username}.cert"
+			# p = tempuser.certif.open("wb")
+			file = io.BytesIO()
+			file.write(cert)
+
+			# p.write(file.getvalue())
+			# p.close()
+			tempuser.certif.save(f"certificate_{tempuser.user.username}.cert", file)
 			tempuser.pvkey = key
 			tempuser.pubkey = pkey
 			tempuser.save()
@@ -94,8 +97,6 @@ def logoutUser(request):
 	logout(request)
 	return redirect('login')
 
-
-
 @login_required(login_url='login')
 def home(request):
 	if request.method == 'POST':
@@ -120,7 +121,8 @@ def home(request):
 			instance = Message(document = request.FILES['document'], password = mp )
 			
 			recipe.document = instance.document
-			recipe.password = instance.password
+			recipe.password = instance.password.decode("utf-8")
+
 			recipe.save()
 			# mp = mdp(16)
 			# encrypt(fencrypt,mp)
@@ -141,10 +143,59 @@ def reception(request):
 	user_id = User.objects.get( username = request.user).id
 	msgs = Message.objects.filter(sento = user_id)
 	
-	filelink = [[i+1, u.sentfrom , u.document.name, u.uploaded_at.strftime("%b %d %Y %H:%M:%S")] for i,u in enumerate(msgs)]
+	filelink = [[i+1, u.sentfrom , u.document.name.replace(folder, ""), u.uploaded_at.strftime("%b %d %Y %H:%M:%S")] for i,u in enumerate(msgs)]
 	
 	context = {
 		'data' : filelink
 	}
 
 	return render(request,'UsersAuth/reception.html',  context)
+
+
+@login_required(login_url='login')
+def dload(request):
+	if request.method == "GET":
+		# print(list(request.GET.keys())[0])
+		msgs = Message.objects.get(document = folder + list(request.GET.keys())[0])
+		# with open(msgs.document.name.replace(folder, "").replace("enc", "")) as f:
+		# 	f.write("hello")
+		file = io.BytesIO()
+		# from tkinter import filedialog
+		# filename = filedialog.askopenfilename()
+		from django.http import HttpResponse
+		import re
+		import csv
+		# with open(filename + msgs.document.name.replace(folder, "").replace("enc", "") , "wb") as f:
+		# 	f.write(b'hello')
+
+		# obj = Message.objects.get(document = folder + list(request.GET.keys())[0])
+		# filename = obj.document.path
+		# file.write(msgs.document.read())
+		# FileResponse(file.getbuffer())
+		filename = msgs.document.name.replace(folder, "").replace(".enc", "")
+		fileext = re.search("\..+$",filename).group()
+		mp = msgs.password
+		
+		response = HttpResponse( content_type=f'{fileext}', headers={'Content-Disposition': f'attachment; filename={filename}'},)
+		decrypted = decrypt(msgs.document.path, mp.encode("utf-8"))
+		# file.write(decrypted)
+		print(filename, fileext,mp.encode("utf-8") , mp.encode("utf-8") == b'n+HqiyPNCZ;f9BKT')
+		response.write(decrypted)
+
+		return response
+		
+		
+
+
+		pass
+
+	# user_id = User.objects.get( username = request.user).id
+	# msgs = Message.objects.filter(sento = user_id)
+	
+	# filelink = [[i+1, u.sentfrom , u.document.name, u.uploaded_at.strftime("%b %d %Y %H:%M:%S")] for i,u in enumerate(msgs)]
+	
+	# context = {
+	# 	'data' : filelink
+	# }
+
+	return render(request,'UsersAuth/download.html')#,  context)

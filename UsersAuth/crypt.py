@@ -56,15 +56,12 @@ def decrypt(file_name,key):
             cipher = AES.new(key,AES.MODE_CFB,iv)
             decrypted = cipher.decrypt(ciphertext)
             decrypted = unpad(decrypted,AES.block_size)
-            with open(file_name.replace("enc","dec"),'wb') as data:
-                data.write(decrypted)
-            data.close()
-        except(ValueError,KeyError):
-            print('wrong password')    
-            
+            # print(decrypted)
+            return decrypted
+        except:
+            print("wrong password")
 
-key = pad(mdp(AES.block_size),AES.block_size)
+
+# key = pad(mdp(AES.block_size),AES.block_size)
 # encrypt1("model.txt","3A.mSd/5[eBVbHPw")
-decrypt("letters.xlsx_EkIp0Qm.enc", b'bdL1]-r7pumTUo.F')
-
-
+# decrypt("static\images\demande-municipalite-AGE.doc.enc", b';nP*UWp]X=J54Fk2')
