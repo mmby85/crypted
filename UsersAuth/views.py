@@ -19,7 +19,6 @@ from UsersAuth.certifgen import gen_openssl
 # Create your views here.
 from .forms import CreateUserForm, MessageForm, CeritfForm
 
-
 @login_required(login_url='login')
 def adminpage(request):
 
@@ -123,7 +122,7 @@ def home(request):
 			
 			recipe.document = instance.document
 			pubkey = crypto.objects.get( user = recipe.sento).pubkey
-			recipe.password = cypherpass(mp.decode("utf-8"), pubkey)
+			recipe.password = cypherpass(mp, pubkey)
 
 			recipe.save()
 			# mp = mdp(16)
@@ -177,12 +176,11 @@ def dload(request):
 		filename = msgs.document.name.replace(folder, "").replace(".enc", "")
 		fileext = re.search("\..+$",filename).group()
 		print(msgs.password)
-		mp = decypherpass(msgs.password,prvkey )
+		mp = decypherpass(msgs.password,prvkey)
 		
 		response = HttpResponse( content_type=f'{fileext}', headers={'Content-Disposition': f'attachment; filename={filename}'},)
-		decrypted = decrypt(msgs.document.path, mp.encode("utf-8"))
+		decrypted = decrypt(msgs.document.path, mp)
 		# file.write(decrypted)
-		print(filename, fileext,mp.encode("utf-8") , mp.encode("utf-8") == b'n+HqiyPNCZ;f9BKT')
 		response.write(decrypted)
 
 		return response

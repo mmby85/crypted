@@ -7,6 +7,8 @@ from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 import binascii
 from base64 import b64decode, b64encode
+import base64
+
 import getpass
 
 try:
@@ -73,19 +75,22 @@ def cypherpass(mp , key):
     pbkey1 = RSA.import_key(key) 
 
     encryptor = PKCS1_OAEP.new(pbkey1)
-    encrypted = encryptor.encrypt(mp.encode("utf-8"))
+    if type(mp) == str:
+        mp = mp.encode("utf-8")
+
+    encrypted = encryptor.encrypt(mp)#.encode("utf-8"))
     
     return binascii.hexlify(encrypted).decode('UTF-8')
 
 
 def decypherpass(mp , key):
 
-    try :
-        pvkey1 = RSA.import_key(key)
-        decryptor = PKCS1_OAEP.new(pvkey1)
-        decrypted = decryptor.decrypt(mp)
-    except os.error:
-        print("error", os.error)
+    data = binascii.unhexlify(mp)
+    pvkey1 = RSA.import_key(key)
+    decryptor = PKCS1_OAEP.new(pvkey1)
+
+    decrypted = decryptor.decrypt(data)
+
 
     return decrypted
 
