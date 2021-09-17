@@ -4,3 +4,5 @@ static/images/*
 static/certificates/*
 **/ssl
 *.sqlite3
+gitsave
+launch
