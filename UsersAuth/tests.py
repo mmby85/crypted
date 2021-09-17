@@ -54,8 +54,10 @@ decryptor = PKCS1_OAEP.new(pvkey1)
 decrypted = decryptor.decrypt(encrypted)
 decrypted
 
-from UsersAuth.models import Message, crypto, folder
+from django.contrib.auth.models import User
+from UsersAuth.models import Message, Certif, folder
 from UsersAuth.crypt import * 
+from UsersAuth.certifgen import *
 
 msg = Message.objects.last()
 mp = mdp(16).decode("utf-8")
@@ -63,8 +65,8 @@ mp = mdp(16).decode("utf-8")
 # mp = msg.password
 print(mp)
 user = msg.sento 
-pubkey = crypto.objects.get( user = user).pubkey 
-prvkey = crypto.objects.get( user = user).pvkey 
+pubkey = Certif.objects.get( user = user).pubkey 
+prvkey = Certif.objects.get( user = user).pvkey 
 
 p = cypherpass(mp, pubkey)
 msg.password = p
@@ -74,3 +76,25 @@ msg = Message.objects.last()
 r = decypherpass(msg.password, prvkey) 
 # r = decypherpass(mp, prvkey) 
 
+from django.contrib.auth.models import User
+from UsersAuth.models import Message, Certif, folder
+from UsersAuth.crypt import * 
+from UsersAuth.certifgen import *
+import io
+
+tempuser = User.objects.create(username= "kol",email= "" )
+tempuser.set_password("123")
+tempuser.save()
+
+
+cert , key , pkey = gen_openssl()
+tempcrypt = Certif.objects.create(user  = User.objects.get(id = tempuser.id  ))
+cert , key , pkey = gen_openssl()
+
+file = io.BytesIO()
+file.write(cert)
+
+tempcrypt.certif.save(f"certificate_{tempuser.username}.cert", file)
+tempcrypt.pvkey = key.decode("utf-8")
+tempcrypt.pubkey = pkey.decode("utf-8")
+tempcrypt.save()

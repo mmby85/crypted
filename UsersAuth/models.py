@@ -1,9 +1,9 @@
 from django.db import models
 from django.conf import settings
 
-folder = 'static/images/'
+folder = 'static/documents/'
 
-class crypto(models.Model):
+class Certif(models.Model):
     user = models.ForeignKey(
     settings.AUTH_USER_MODEL,
     on_delete=models.CASCADE,

@@ -4,6 +4,18 @@
 
 	}
 
+	#id_sento {
+		width: 500px;
+	}
+	#id_description {
+		width: 500px;
+	}
+	#id_document {
+		width: 500px;
+		align-items: center;
+	}
+
+	id_description
 
 	#total-orders{
 		background-color: #4cb4c7;

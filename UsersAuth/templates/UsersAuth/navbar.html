@@ -30,8 +30,11 @@
       {% if request.user.is_superuser %}
       <span ><a  class="hello-msg" href="{% url 'adminpage' %}">Admin</a></span>
       {% endif %}
+      {% if not request.user.is_superuser %}
   <span ><a  class="hello-msg" href="{% url 'home' %}">Envoyer</a></span>
   <span ><a  class="hello-msg" href="{% url 'reception' %}">Reçu</a></span>
+  {% endif %}
   <span ><a  class="hello-msg" href="{% url 'logout' %}">Logout</a></span>
+
 
 </nav>

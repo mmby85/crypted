@@ -1,4 +1,4 @@
-from UsersAuth.models import Message, crypto, folder
+from UsersAuth.models import Message, Certif, folder
 from typing import ContextManager
 from django.shortcuts import render, redirect 
 from django.http import HttpResponse
@@ -27,10 +27,7 @@ def adminpage(request):
 	except:
 		adduser = False
 
-	try:
-		gencertif =	request.POST['gencertif'] == "True" 
-	except:
-		gencertif = False
+
 
 	if request.user.is_superuser :
 		if request.method == "POST" and adduser  :
@@ -38,32 +35,24 @@ def adminpage(request):
 				tempuser = User.objects.create(username= request.POST['username'],email= request.POST['email'] )
 				tempuser.set_password(request.POST['password'])
 				tempuser.save()
+
+				
+				cert , key , pkey = gen_openssl()
+				tempcrypt = Certif.objects.create(user  = User.objects.get(id = tempuser.id  ))
+				cert , key , pkey = gen_openssl()
+
+				file = io.BytesIO()
+				file.write(cert)
+
+				tempcrypt.certif.save(f"certificate_{tempuser.username}.cert", file)
+				tempcrypt.pvkey = key.decode("utf-8")
+				tempcrypt.pubkey = pkey.decode("utf-8")
+				tempcrypt.save()
 			except:
 				return redirect('adminpage')
 
 			return redirect('adminpage')
 
-		elif request.method == "POST" and gencertif :
-			cert , key , pkey = gen_openssl()
-			# try:
-				
-			tempuser = crypto.objects.create(user  = User.objects.get(id =  request.POST['user']))
-			cert , key , pkey = gen_openssl()
-			# tempuser.certif.name = f"certificate_{tempuser.user.username}.cert"
-			# p = tempuser.certif.open("wb")
-			file = io.BytesIO()
-			file.write(cert)
-
-			# p.write(file.getvalue())
-			# p.close()
-			tempuser.certif.save(f"certificate_{tempuser.user.username}.cert", file)
-			tempuser.pvkey = key.decode("utf-8")
-			tempuser.pubkey = pkey.decode("utf-8")
-			tempuser.save()
-			# except:
-			# 	return redirect('adminpage')
-
-			return redirect('adminpage')
 		else:
 			form = CreateUserForm()
 			certif = CeritfForm()
@@ -121,7 +110,7 @@ def home(request):
 			instance = Message(document = request.FILES['document'], password = mp )
 			
 			recipe.document = instance.document
-			pubkey = crypto.objects.get( user = recipe.sento).pubkey
+			pubkey = Certif.objects.get( user = recipe.sento).pubkey
 			recipe.password = cypherpass(mp, pubkey)
 
 			recipe.save()
@@ -133,6 +122,8 @@ def home(request):
 			return redirect('home')
 	else:
 		form = MessageForm()
+		form.excludeid(request.user.username)
+
 
 
 	return render(request,'UsersAuth/dashboard.html',  {'form': form })
@@ -168,7 +159,7 @@ def dload(request):
 		import csv
 		# with open(filename + msgs.document.name.replace(folder, "").replace("enc", "") , "wb") as f:
 		# 	f.write(b'hello')
-		prvkey = crypto.objects.get( user = msgs.sento).pvkey
+		prvkey = Certif.objects.get( user = msgs.sento).pvkey
 		# obj = Message.objects.get(document = folder + list(request.GET.keys())[0])
 		# filename = obj.document.path
 		# file.write(msgs.document.read())

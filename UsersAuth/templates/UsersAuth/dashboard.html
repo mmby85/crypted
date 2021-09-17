@@ -29,8 +29,8 @@
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
-  <div style="margin-top: 10%;">
-    <h1 style="margin-left: 2%;">Upload File</h1>
+  <div style="padding:50px;margin-left:20%;width: 600px;">
+    <h1 >Upload File</h1>
   
   <div class="container m-3" >
     <h3>Send To</h3>
@@ -40,14 +40,14 @@
     {{ form.description }}
     <hr>
     <div class="input-group">
-      <div class="custom-file">
+      <div class="custom-file mt-3" >
 
   {{ form.document }}
 
   <!-- <input type="file" class="custom-file-input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" name="document"> -->
-  <label class="custom-file-label" for="id_document">Choose file</label>
+  <label class="custom-file-label" for="id_document" style="align-items: center;width: 500px;">Choose file</label>
 </div>
-<div class="input-group-append">
+<div class="input-group-append" style="margin-top: 90px">
   <button class="btn btn-outline-secondary" type="submit" id="inputGroupFileAddon04" >Enoyer</button>
 </div>
 </div>
@@ -60,11 +60,11 @@
 
 <script>
 const inp =document.getElementsByName('document')[0];
-document.getElementsByName('document')[0].aria-describedby = "inputGroupFileAddon04";
+inp.aria-describedby = "inputGroupFileAddon04";
+inp.style.width = "150px";
+document.getElementsByTagName('label')[0].innerHTML = document.getElementById("id_document").value.replace('C:\\fakepath\\', ' ');
 
 </script>
-
-<p><a href="{% url 'home' %}">Return to home</a></p>
 
 
 {% endblock %}
