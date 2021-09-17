@@ -4,6 +4,26 @@
 
 	}
 
+	table {
+		align-content: center;
+	}
+	thead tr:hover{color: initial;
+	background: initial;}
+	
+	
+	tr:hover, tr a:hover {
+		background: rgb(123, 134, 197);
+		color: white;
+
+	}
+
+
+	
+	table a {
+		color: rgb(0, 0, 0);
+	}
+
+
 	#id_sento {
 		width: 500px;
 	}

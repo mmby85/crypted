@@ -20,13 +20,13 @@
     <tbody>
    
         {% for d in data %}
-        <tr>
+        <tr >
           {% for elm in d %}
-        <td>
+        <td >
          
 
          {% if forloop.counter0	 == 4 %}
-         &nbsp;&nbsp;&nbsp; <a href="../download?{{ elm }}">Download</a>
+         &nbsp;&nbsp;&nbsp; <a href="../download?{{ elm }}" style="align-self: center;">Download</a>
          {% else %}
          {{ elm }} 
          {% endif %}
