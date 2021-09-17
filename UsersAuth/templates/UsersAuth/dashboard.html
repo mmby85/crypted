@@ -60,9 +60,11 @@
 
 <script>
 const inp =document.getElementsByName('document')[0];
-inp.aria-describedby = "inputGroupFileAddon04";
+inp.ariadescribedby = "inputGroupFileAddon04";
 inp.style.width = "150px";
-document.getElementsByTagName('label')[0].innerHTML = document.getElementById("id_document").value.replace('C:\\fakepath\\', ' ');
+function getlabval(){document.getElementsByTagName('label')[0].innerHTML = document.getElementById("id_document").value.replace('C:\\fakepath\\', ' ');}
+const elm = document.getElementById("id_document");
+elm.addEventListener("change", getlabval);
 
 </script>
 

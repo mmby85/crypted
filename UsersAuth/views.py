@@ -88,6 +88,8 @@ def logoutUser(request):
 
 @login_required(login_url='login')
 def home(request):
+	if request.user.is_superuser :
+		return redirect('/adminpage/')
 	if request.method == 'POST':
 		form = MessageForm(request.POST, request.FILES)
 		if form.is_valid():
@@ -135,7 +137,7 @@ def reception(request):
 	user_id = User.objects.get( username = request.user).id
 	msgs = Message.objects.filter(sento = user_id)
 	
-	filelink = [[i+1, u.sentfrom , u.document.name.replace(folder, ""), u.uploaded_at.strftime("%b %d %Y %H:%M:%S")] for i,u in enumerate(msgs)]
+	filelink = [[i+1, u.sentfrom , u.document.name.replace(folder, ""), u.uploaded_at.strftime("%b %d %Y %H:%M:%S"), u.document.name.replace(folder, "")] for i,u in enumerate(msgs)]
 	
 	context = {
 		'data' : filelink

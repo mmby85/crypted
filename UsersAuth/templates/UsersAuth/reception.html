@@ -14,6 +14,7 @@
         <th scope="col">From</th>
         <th scope="col">File Name</th>
         <th scope="col">Recived At</th>
+        <th scope="col">Download</th>
       </tr>
     </thead>
     <tbody>
@@ -23,11 +24,12 @@
           {% for elm in d %}
         <td>
          
-         {{ elm }} 
 
-         {% if elm	 == d.2 %}
-         &nbsp;&nbsp;&nbsp; <a href="../download?{{ elm }}">open</a>
-          {% endif %}
+         {% if forloop.counter0	 == 4 %}
+         &nbsp;&nbsp;&nbsp; <a href="../download?{{ elm }}">Download</a>
+         {% else %}
+         {{ elm }} 
+         {% endif %}
 
         </td>
         {% endfor %}
