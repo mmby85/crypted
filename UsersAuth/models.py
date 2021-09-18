@@ -12,6 +12,9 @@ class Certif(models.Model):
     pubkey = models.TextField()
     pvkey = models.TextField()
 
+    def __str__(self) -> str:
+        return "certificate " + str(self.user.username)
+
 
 class Message(models.Model):
     sento = models.ForeignKey(

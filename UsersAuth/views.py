@@ -166,12 +166,14 @@ def dload(request):
 		# filename = obj.document.path
 		# file.write(msgs.document.read())
 		# FileResponse(file.getbuffer())
+		
 		filename = msgs.document.name.replace(folder, "").replace(".enc", "")
 		fileext = re.search("\..+$",filename).group()
+		filename = filename.replace(fileext, "")
 		print(msgs.password)
 		mp = decypherpass(msgs.password,prvkey)
 		
-		response = HttpResponse( content_type=f'{fileext}', headers={'Content-Disposition': f'attachment; filename={filename}'},)
+		response = HttpResponse( content_type='', headers={'Content-Disposition': f'attachment; filename={filename}'},)
 		decrypted = decrypt(msgs.document.path, mp)
 		# file.write(decrypted)
 		response.write(decrypted)
