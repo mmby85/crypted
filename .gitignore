@@ -1,8 +1,8 @@
-static/document/*
+static/document/
 crypted/settings.py
 static/images/*
 static/certificates/*
-**/ssl
+./ssl
 *.sqlite3
 ./gitsave.cmd
 ./launch.cmd
