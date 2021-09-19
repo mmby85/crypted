@@ -2,41 +2,52 @@
 {% load static %}
 
 {% block content %}
-
-<div class="container mt-5">
-  <form action="" method="POST" autocomplete="off">
+<style>
+  	.cont1 {
+    margin: 6% 25% 0% 25%;
+		width: 500px;
+		height: 420px;
+		background : url("https://images.unsplash.com/photo-1524514587686-e2909d726e9b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80") no-repeat   center center #505050;   
+		background-size: cover;
+    opacity: 86% ;
+		display: hidden;
+    padding-right: 10%;
+    padding-left: 3%;
+    border-radius: 25px;
+	}
+  h1 {color: white; padding-top: 10%;}
+</style>
+<div class="container mt-5" >
+  <div class="cont1">
+    <h1 style="margin-bottom: 15px;">Add Users</h1>
+  <form action="" method="POST" autocomplete="off" >
     {% csrf_token %}
     <input type="hidden" name="adduser" value="True">
-<h1 style="margin-bottom: 15px;">Add Users</h1>
 
-  <div class="row">
-    <div class="col-sm">
-      <div class="input-group mb-3">
+
+  <div class="row pl-5" >
+
+      <div class="input-group mb-3 pb-3 pt-3">
         <div class="input-group-prepend">
-          <span class="input-group-text" id="inputGroup-sizing-default">Username</span>
+          <span class="input-group-text" id="inputGroup-sizing-default" style="width: 100px;">Username</span>
         </div>
         <input type="text" autocomplete="false" class="form-control" name="username" aria-label="Default" aria-describedby="inputGroup-sizing-default">
       </div>
       
-    </div>
-    <div class="col-sm">
-      <div class="input-group mb-3">
+      <div class="input-group mb-3 pb-3">
         <div class="input-group-prepend">
-          <span class="input-group-text" id="inputGroup-sizing-default">Password</span>
+          <span class="input-group-text" id="inputGroup-sizing-default" style="width: 100px;">Password</span>
         </div>
         <input type="password" autocomplete="new-password" name="password"  class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
       </div>
       
-    </div>
-    <div class="col-sm">
-      <div class="input-group mb-3">
+      <div class="input-group mb-3 pb-3">
         <div class="input-group-prepend">
-          <span class="input-group-text" id="inputGroup-sizing-default">E-mail</span>
+          <span class="input-group-text" id="inputGroup-sizing-default" style="width: 100px;">E-mail</span>
         </div>
         <input type="email" autocomplete="off" name="email" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
       </div>
       
-    </div>
   </div>
 
   <div style="left: 93%;position: relative ;margin-top: 20px;">
@@ -44,8 +55,9 @@
   </div>
 
 </form>
-</div>
 
+</div>
+</div>
 <!-- 
 
   <div class="container mt-5">
@@ -57,7 +69,7 @@
   
     <div class="row">
       <div class="col-sm">
-        <div class="input-group mb-3">
+        <div class="input-group mb-3 pb-3">
           <div class="input-group-prepend">
             <span class="input-group-text" id="inputGroup-sizing-default">Username</span>
           </div>
