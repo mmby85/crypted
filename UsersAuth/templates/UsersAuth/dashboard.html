@@ -86,6 +86,7 @@ inp.style.width = "150px";
 function getlabval(){document.getElementsByTagName('label')[0].innerHTML = document.getElementById("id_document").value.replace('C:\\fakepath\\', ' ');}
 const elm = document.getElementById("id_document");
 elm.addEventListener("change", getlabval);
+document.getElementById("id_sento").className = 'form-control';
 
 </script>
 
