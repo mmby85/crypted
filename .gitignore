@@ -1,8 +1,8 @@
-static/document/
-crypted/settings.py
-static/images/*
-static/certificates/*
-./ssl
-*.sqlite3
 gitsave.txt
 launch.txt
+*.sqlite3
+crypted/settings.py
+ssl/*
+**/document/
+static/certificates/*
+
