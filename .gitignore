@@ -5,4 +5,4 @@ crypted/settings.py
 ssl/*
 **/document/
 static/certificates/*
-
+*.txt
