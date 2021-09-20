@@ -1,5 +1,3 @@
-gitsave.txt
-launch.txt
 *.sqlite3
 crypted/settings.py
 ssl/*
