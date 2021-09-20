@@ -9,6 +9,7 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.models import User
 from django.contrib.auth import SESSION_KEY, authenticate, login, logout
 import io
+import re
 from django.contrib import messages
 from django.http import FileResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -108,7 +109,6 @@ def home(request):
 			request.FILES['document'].write(text)
 			request.FILES['document'].name = request.FILES['document'].name + ".enc"
 
-
 			instance = Message(document = request.FILES['document'], password = mp )
 			
 			recipe.document = instance.document
@@ -136,8 +136,7 @@ def home(request):
 def reception(request):
 	user_id = User.objects.get( username = request.user).id
 	msgs = Message.objects.filter(sento = user_id)
-	
-	filelink = [[i+1, u.sentfrom , u.document.name.replace(folder, ""), u.uploaded_at.strftime("%b %d %Y %H:%M:%S"), u.document.name.replace(folder, "")] for i,u in enumerate(msgs)]
+	filelink = [[i+1, u.sentfrom , u.document.name.replace(folder, "").replace(".enc","") if re.search("_..+$",u.document.name) == None else re.sub("_..+$","",u.document.name).replace(folder, "").replace(".enc",""), u.uploaded_at.strftime("%b %d %Y %H:%M:%S"), u.document.name.replace(folder, "")] for i,u in enumerate(msgs)]
 	
 	context = {
 		'data' : filelink
@@ -167,15 +166,18 @@ def dload(request):
 		# file.write(msgs.document.read())
 		# FileResponse(file.getbuffer())
 		
-		filename = msgs.document.name.replace(folder, "").replace(".enc", "")
+		filename = msgs.document.name.replace(folder, "").replace(".enc","")
+		if re.search("_..+$",filename) != None :
+			filename = re.sub("_..+$","",filename)
+
 		fileext = re.search("\..+$",filename).group()
-		filename = filename.replace(fileext, "")
 		print(msgs.password)
 		mp = decypherpass(msgs.password,prvkey)
-		
-		response = HttpResponse( content_type='', headers={'Content-Disposition': f'attachment; filename={filename}'},)
+
+		response = HttpResponse( content_type=f'{fileext}', headers={'Content-Disposition': f'attachment; filename={filename}'},)
 		decrypted = decrypt(msgs.document.path, mp)
 		# file.write(decrypted)
+
 		response.write(decrypted)
 
 		return response

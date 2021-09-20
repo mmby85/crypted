@@ -98,3 +98,19 @@ tempcrypt.certif.save(f"certificate_{tempuser.username}.cert", file)
 tempcrypt.pvkey = key.decode("utf-8")
 tempcrypt.pubkey = pkey.decode("utf-8")
 tempcrypt.save()
+
+import os
+import re
+
+m = Message.objects.create(sento_id = 2,sentfrom = "anas")
+m.document = my_file
+m.document.name    
+cur_list = os.listdir(''.join([os.getcwd(), '\\static\\documents\\']) ) 
+if m.document.name in cur_list:
+        print("it exists")
+        m.document.name = re.sub( '\..*$',  , m.document.name )
+
+fext = re.search('\..*$',  m.document.name ).group()
+m.document.name[:-(len(fext))] + str(m.uploaded_at) + fext
+
+# m.save()  
