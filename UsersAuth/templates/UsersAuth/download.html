@@ -2,7 +2,18 @@
 {% load static %}
 
 {% block content %}
-
+<style>
+    h1, h3, a, input  {color : white}
+    input {background-color: transparent; border-color: white;border-radius: 25px; padding :6px 20px 6px 20px;}
+</style>
+<div class="container m-5">
 <h1>Download</h1>
+<form action="" methode ="POST"></form>
+<h3>File :</h3> <a href="">{{filename}}</a>
+<div style="display: inline;">
+<h3 style="display: inline;">Private Key : </h3> <input style="display: inline;" type="file" name="prvkey">
+</div>
+<input type="submit" name="" id="" value="Décrypter">
+</div>
 
 {% endblock %}

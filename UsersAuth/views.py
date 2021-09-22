@@ -147,11 +147,17 @@ def reception(request):
 
 @login_required(login_url='login')
 def dload(request):
-	if request.method == "GET":
+	try:
+		getm = request.GET.keys()[0] != None
+	except:
+		getm = False
+	if request.method == "GET" and getm:
+
 		# print(list(request.GET.keys())[0])
 		msgs = Message.objects.get(document = folder + list(request.GET.keys())[0])
 		# with open(msgs.document.name.replace(folder, "").replace("enc", "")) as f:
 		# 	f.write("hello")
+	if request.method == "POST" : 
 		file = io.BytesIO()
 		# from tkinter import filedialog
 		# filename = filedialog.askopenfilename()
@@ -182,8 +188,6 @@ def dload(request):
 
 		return response
 		
-		
-
 
 		pass
 
