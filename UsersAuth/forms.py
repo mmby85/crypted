@@ -28,3 +28,7 @@ class CeritfForm(forms.ModelForm):
 
         model = Certif
         fields = ('user', )
+
+
+class UpFile(forms.Form):
+    ufile = forms.FileField()

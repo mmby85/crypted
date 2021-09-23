@@ -18,7 +18,7 @@ div::-webkit-scrollba {
 <div class="col">
 
 <h1 style="margin-bottom: 20px;"> Download</h1>
-<form action=" " method ="POST">
+<form action=" " method ="POST" enctype="multipart/form-data".>
 
     {% csrf_token %}
 <input type="hidden" name = "filepath" value="{{ filepath }}">
@@ -38,7 +38,7 @@ div::-webkit-scrollba {
 <br>
 
 <div style="margin-top: 10px;">
-<h3 style="display: inline;">Private Key : </h3>  <input style="reset" type="textarea" name="prvkey">
+<h3 style="display: inline;">Private Key : </h3>  <input type="file" name="file">
 <br>
 <input type="submit" id="" value="Décrypter" style="position: relative;left: 40%; margin-top: 30px;">
 
@@ -50,7 +50,15 @@ div::-webkit-scrollba {
 
 <div class="col" style="width:50%; height : 400px; align-items: center;justify-items: center;color: white;">
    <h3> Password </h3>
-    {{ result}}
+    {{ result }}
+    <form action="" method = "GET">
+        {% csrf_token %}
+    <input type="submit" value="Download File">
+
+    <input type="hidden" name="" value="{{filename}}">
+
+    </form>
+
 </div>
 
 </div>

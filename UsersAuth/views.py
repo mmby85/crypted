@@ -18,11 +18,9 @@ import datetime
 from .crypt import encrypt, mdp, decrypt, decypherpass, cypherpass
 from UsersAuth.certifgen import gen_openssl
 # Create your views here.
-from .forms import CreateUserForm, MessageForm, CeritfForm
+from .forms import CreateUserForm, MessageForm, CeritfForm, UpFile
 
-from django import forms
-class upfile(forms.Form):
-    file = forms.Textarea()
+
 
 
 @login_required(login_url='login')
@@ -160,12 +158,16 @@ def dload(request):
 
 	if request.method == "POST" : 
 		# try:
-			msgs = Message.objects.get(document = folder + request.POST['filepath'])
-			prvkey = request.POST['prvkey']
+			request.FILES['file'].open("w+")
+			prvkey = request.FILES['file'].read()
+			request.FILES['file'].close()
+
+			msgs = Message.objects.filter(document = folder + request.POST['filepath']).last()
 			
 			filename = msgs.document.name.replace(folder, "").replace(".enc","")
 			if re.search("_..+$",filename) != None :
 				filename = re.sub("_..+$","",filename)
+				# fileext = re.search("\..+$",filename).group()
 
 			pw = msgs.password			
 			mp = decypherpass(pw,prvkey)
@@ -174,24 +176,34 @@ def dload(request):
 				result = "Wrong Key"
 			else:
 				result = mp
+			
+			pw = msgs.password
+			mp = decypherpass(pw,prvkey)
 
+			response = HttpResponse( content_type= '', headers={'Content-Disposition': f'attachment; filename={filename}'},)
+			decrypted = decrypt(msgs.document.path, mp)
+			response.write(decrypted)
+			response.context = {"result" : result}
+			print(response.context)
+			context ={'filename':filename , 
+			'link': msgs.document.path , 
+			"filepath" : list(request.GET.keys())[0], 
+			"pw" : str(msgs.password),
+				}
+			
 	
-			return render(request,'UsersAuth/download.html',  context= { 'resp': f"decrypted?{filename}" , 'pw' : pw ,  'result' : result})
+			return response
+			return render(request,'UsersAuth/download.html',  context)
 
-		
-		# except:
-			print("error")
 	
 	if request.method == "GET" and getm:
-		msgs = Message.objects.get(document = folder + list(request.GET.keys())[0])
+		msgs = Message.objects.filter(document = folder + list(request.GET.keys())[0]).last()
 		pw = msgs.password
-		form = upfile()
 		filename = msgs.document.name.replace(folder, "").replace(".enc","") if re.search("_..+$",msgs.document.name) == None else re.sub("_..+$","",msgs.document.name).replace(folder, "").replace(".enc","")
 		context ={'filename':filename , 
 				'link': msgs.document.path , 
 				"filepath" : list(request.GET.keys())[0], 
 				"pw" : str(msgs.password),
-				"form" : form,
 		}
 		
 
@@ -201,9 +213,10 @@ def dload(request):
 @login_required(login_url='login')
 def ddecrypt(request):
 
-	if request.method == "POST" :   
-		msgs = Message.objects.get(document = folder + request.POST['filepath'])
-
+	if request.method == "GET":
+		msgs = Message.objects.filter(document = folder + list(request.GET.keys())[0]).last()
+		pw = msgs.password
+		filename = msgs.document.name.replace(folder, "").replace(".enc","") if re.search("_..+$",msgs.document.name) == None else re.sub("_..+$","",msgs.document.name).replace(folder, "").replace(".enc","")
 		file = io.BytesIO()
 		prvkey = Certif.objects.get( user = msgs.sento).pvkey
 		
@@ -223,4 +236,4 @@ def ddecrypt(request):
 		return response
 
 
-	return 
+	return redirect('download')
