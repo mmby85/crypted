@@ -92,8 +92,17 @@ def logoutUser(request):
 
 @login_required(login_url='login')
 def home(request):
+
+
 	if request.user.is_superuser :
 		return redirect('/adminpage/')
+
+
+		# if first time :
+	cert = Certif.objects.get( user = request.user)
+	if cert.recived == False :
+		return redirect("getkey")
+
 	if request.method == 'POST':
 		form = MessageForm(request.POST, request.FILES)
 		if form.is_valid():
@@ -137,6 +146,9 @@ def home(request):
 
 @login_required(login_url='login')
 def reception(request):
+
+
+
 	user_id = User.objects.get( username = request.user).id
 	msgs = Message.objects.filter(sento = user_id)
 	filelink = [[i+1, u.sentfrom , u.document.name.replace(folder, "").replace(".enc","") if re.search("_..+$",u.document.name) == None else re.sub("_..+$","",u.document.name).replace(folder, "").replace(".enc",""), u.uploaded_at.strftime("%b %d %Y %H:%M:%S"), u.document.name.replace(folder, "")] for i,u in enumerate(msgs)]
@@ -168,31 +180,26 @@ def dload(request):
 			if re.search("_..+$",filename) != None :
 				filename = re.sub("_..+$","",filename)
 				# fileext = re.search("\..+$",filename).group()
-
-			pw = msgs.password			
+			
+			pw = msgs.password
 			mp = decypherpass(pw,prvkey)
 
 			if mp == "Wrong Key" :
 				result = "Wrong Key"
 			else:
 				result = mp
-			
-			pw = msgs.password
-			mp = decypherpass(pw,prvkey)
 
-			response = HttpResponse( content_type= '', headers={'Content-Disposition': f'attachment; filename={filename}'},)
-			decrypted = decrypt(msgs.document.path, mp)
-			response.write(decrypted)
-			response.context = {"result" : result}
-			print(response.context)
+
+
 			context ={'filename':filename , 
 			'link': msgs.document.path , 
 			"filepath" : list(request.GET.keys())[0], 
 			"pw" : str(msgs.password),
+			'result' : result,
+			"mp" : str(mp.decode('utf-8')),
 				}
 			
 	
-			return response
 			return render(request,'UsersAuth/download.html',  context)
 
 	
@@ -214,26 +221,43 @@ def dload(request):
 def ddecrypt(request):
 
 	if request.method == "GET":
-		msgs = Message.objects.filter(document = folder + list(request.GET.keys())[0]).last()
-		pw = msgs.password
-		filename = msgs.document.name.replace(folder, "").replace(".enc","") if re.search("_..+$",msgs.document.name) == None else re.sub("_..+$","",msgs.document.name).replace(folder, "").replace(".enc","")
-		file = io.BytesIO()
-		prvkey = Certif.objects.get( user = msgs.sento).pvkey
-		
-		filename = msgs.document.name.replace(folder, "").replace(".enc","")
-		if re.search("_..+$",filename) != None :
-			filename = re.sub("_..+$","",filename)
 
-		fileext = re.search("\..+$",filename).group()
+		print(request.GET)
+		msgs = Message.objects.filter(document = folder + request.GET['filepath']).last()
 
-		pw = msgs.password
-		mp = decypherpass(pw,prvkey)
+		mp = request.GET['mp']
+		filename = request.GET['filename']
 
-		response = HttpResponse( content_type=f'{fileext}', headers={'Content-Disposition': f'attachment; filename={filename}'},)
-		decrypted = decrypt(msgs.document.path, mp)
+		print(mp)
+		response = HttpResponse( content_type= '', headers={'Content-Disposition': f'attachment; filename={filename}'},)
+		decrypted = decrypt(msgs.document.path, mp.encode('utf-8'))
 		response.write(decrypted)
 	
 		return response
 
 
 	return redirect('download')
+
+@login_required(login_url='login')
+def getkey(request):
+	cert = Certif.objects.get( user = request.user)
+	if cert.recived :
+		return redirect("home")
+
+	try:
+		if request.method == "GET":
+			if request.GET['getkey'] == "ok":
+				cert = Certif.objects.get(user = request.user)
+				prckey = cert.pvkey
+				cert.pvkey = ""
+				cert.recived = True
+				cert.save()
+				
+				response = HttpResponse( content_type= 'key', headers={'Content-Disposition': f'attachment; filename=prkey{cert.user.username}.key'},)
+				response.write(prckey)
+
+				return response
+	except:
+		pass
+	
+	return render(request, 'UsersAuth/getkey.html')

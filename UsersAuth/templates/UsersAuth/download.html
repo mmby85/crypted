@@ -51,11 +51,13 @@ div::-webkit-scrollba {
 <div class="col" style="width:50%; height : 400px; align-items: center;justify-items: center;color: white;">
    <h3> Password </h3>
     {{ result }}
-    <form action="" method = "GET">
-        {% csrf_token %}
-    <input type="submit" value="Download File">
+    <form action="../decrypted" method = "GET">
+    <input type="hidden" name="mp" value="{{mp}}">
+    <input type="hidden" name="filename" value="{{filename}}">
+    <input type="hidden" name="filepath" value="{{filepath}}">
 
-    <input type="hidden" name="" value="{{filename}}">
+
+    <input type="submit" value="Download File" style="margin-top: 70px;">
 
     </form>
 

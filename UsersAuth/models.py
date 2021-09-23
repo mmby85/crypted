@@ -12,6 +12,7 @@ class Certif(models.Model):
     certif = models.FileField(upload_to='static/certificates/')
     pubkey = models.TextField()
     pvkey = models.TextField()
+    recived = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return "certificate " + str(self.user.username)
