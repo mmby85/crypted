@@ -114,3 +114,30 @@ fext = re.search('\..*$',  m.document.name ).group()
 m.document.name[:-(len(fext))] + str(m.uploaded_at) + fext
 
 # m.save()  
+from django.contrib.auth.models import User
+from UsersAuth.models import Message, Certif, folder
+from UsersAuth.crypt import * 
+from UsersAuth.certifgen import *
+import io, re
+from django.http import HttpResponse
+
+filename = "tat2.jpg.enc"
+msgs = Message.objects.get(document = folder + filename)
+
+file = io.BytesIO()
+prvkey = Certif.objects.get( user = msgs.sento).pvkey
+
+filename = msgs.document.name.replace(folder, "").replace(".enc","")
+if re.search("_..+$",filename) != None :
+        filename = re.sub("_..+$","",filename)
+
+fileext = re.search("\..+$",filename).group()
+pw = msgs.password
+mp = decypherpass(pw,prvkey)
+
+response = HttpResponse( content_type=f'{fileext}', headers={'Content-Disposition': f'attachment; filename={filename}'},)
+decrypted = decrypt(msgs.document.path, mp)
+response.write(decrypted)
+
+
+# return response	

@@ -20,6 +20,11 @@ from UsersAuth.certifgen import gen_openssl
 # Create your views here.
 from .forms import CreateUserForm, MessageForm, CeritfForm
 
+from django import forms
+class upfile(forms.Form):
+    file = forms.Textarea()
+
+
 @login_required(login_url='login')
 def adminpage(request):
 
@@ -147,57 +152,75 @@ def reception(request):
 
 @login_required(login_url='login')
 def dload(request):
+	context ={'filename':'Error Loading File' }
 	try:
-		getm = request.GET.keys()[0] != None
+		getm = list(request.GET.keys())[0] != None
 	except:
 		getm = False
-	if request.method == "GET" and getm:
 
-		# print(list(request.GET.keys())[0])
-		msgs = Message.objects.get(document = folder + list(request.GET.keys())[0])
-		# with open(msgs.document.name.replace(folder, "").replace("enc", "")) as f:
-		# 	f.write("hello")
 	if request.method == "POST" : 
+		# try:
+			msgs = Message.objects.get(document = folder + request.POST['filepath'])
+			prvkey = request.POST['prvkey']
+			
+			filename = msgs.document.name.replace(folder, "").replace(".enc","")
+			if re.search("_..+$",filename) != None :
+				filename = re.sub("_..+$","",filename)
+
+			pw = msgs.password			
+			mp = decypherpass(pw,prvkey)
+
+			if mp == "Wrong Key" :
+				result = "Wrong Key"
+			else:
+				result = mp
+
+	
+			return render(request,'UsersAuth/download.html',  context= { 'resp': f"decrypted?{filename}" , 'pw' : pw ,  'result' : result})
+
+		
+		# except:
+			print("error")
+	
+	if request.method == "GET" and getm:
+		msgs = Message.objects.get(document = folder + list(request.GET.keys())[0])
+		pw = msgs.password
+		form = upfile()
+		filename = msgs.document.name.replace(folder, "").replace(".enc","") if re.search("_..+$",msgs.document.name) == None else re.sub("_..+$","",msgs.document.name).replace(folder, "").replace(".enc","")
+		context ={'filename':filename , 
+				'link': msgs.document.path , 
+				"filepath" : list(request.GET.keys())[0], 
+				"pw" : str(msgs.password),
+				"form" : form,
+		}
+		
+
+	return render(request,'UsersAuth/download.html',  context)
+
+
+@login_required(login_url='login')
+def ddecrypt(request):
+
+	if request.method == "POST" :   
+		msgs = Message.objects.get(document = folder + request.POST['filepath'])
+
 		file = io.BytesIO()
-		# from tkinter import filedialog
-		# filename = filedialog.askopenfilename()
-		from django.http import HttpResponse
-		import re
-		import csv
-		# with open(filename + msgs.document.name.replace(folder, "").replace("enc", "") , "wb") as f:
-		# 	f.write(b'hello')
 		prvkey = Certif.objects.get( user = msgs.sento).pvkey
-		# obj = Message.objects.get(document = folder + list(request.GET.keys())[0])
-		# filename = obj.document.path
-		# file.write(msgs.document.read())
-		# FileResponse(file.getbuffer())
 		
 		filename = msgs.document.name.replace(folder, "").replace(".enc","")
 		if re.search("_..+$",filename) != None :
 			filename = re.sub("_..+$","",filename)
 
 		fileext = re.search("\..+$",filename).group()
-		print(msgs.password)
-		mp = decypherpass(msgs.password,prvkey)
+
+		pw = msgs.password
+		mp = decypherpass(pw,prvkey)
 
 		response = HttpResponse( content_type=f'{fileext}', headers={'Content-Disposition': f'attachment; filename={filename}'},)
 		decrypted = decrypt(msgs.document.path, mp)
-		# file.write(decrypted)
-
 		response.write(decrypted)
-
+	
 		return response
-		
 
-		pass
 
-	# user_id = User.objects.get( username = request.user).id
-	# msgs = Message.objects.filter(sento = user_id)
-	
-	# filelink = [[i+1, u.sentfrom , u.document.name, u.uploaded_at.strftime("%b %d %Y %H:%M:%S")] for i,u in enumerate(msgs)]
-	
-	# context = {
-	# 	'data' : filelink
-	# }
-
-	return render(request,'UsersAuth/download.html')#,  context)
+	return 

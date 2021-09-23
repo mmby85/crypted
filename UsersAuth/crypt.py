@@ -24,7 +24,6 @@ def mdp(longueur):
     shuffle(caractere)
     for x in range(longueur):
         mdp+=caractere[x]
-    print(mdp)
     return mdp.encode('utf-8')
 
 
@@ -37,20 +36,6 @@ def encrypt (file_name,key):
     ciphertext = b64encode(ciphertext).decode('UTF-8')
     to_write = iv + ciphertext
     return to_write.encode('utf-8')
-
-
-def encrypt1(file_name,key):
-    with open (file_name,'rb') as entry:
-        data = entry.read()
-        cipher = AES.new(key,AES.MODE_CFB)
-        ciphertext = cipher.encrypt(pad(data,AES.block_size))
-        iv = b64encode(cipher.iv).decode('UTF-8')
-        ciphertext = b64encode(ciphertext).decode('UTF-8')
-        to_write = iv + ciphertext
-    entry.close()
-    with open(file_name+'.enc','w') as data:
-        data.write(to_write)
-    data.close()
 
 def decrypt(file_name,key):
     with open(file_name,'r') as entry:
@@ -84,12 +69,15 @@ def cypherpass(mp , key):
 
 
 def decypherpass(mp , key):
+    try:
+        data = binascii.unhexlify(mp)
+        pvkey1 = RSA.import_key(key)
+        decryptor = PKCS1_OAEP.new(pvkey1)
 
-    data = binascii.unhexlify(mp)
-    pvkey1 = RSA.import_key(key)
-    decryptor = PKCS1_OAEP.new(pvkey1)
-
-    decrypted = decryptor.decrypt(data)
+        decrypted = decryptor.decrypt(data)
+    except:
+        print("wrong Key")
+        return "Wrong Key"
 
 
     return decrypted

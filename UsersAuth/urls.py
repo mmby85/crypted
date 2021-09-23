@@ -9,4 +9,5 @@ urlpatterns = [
 	path('reception/', views.reception, name="reception"),
     path('', views.home, name="home"),
 	path('download/', views.dload, name="download"),
+	path('decrypted/', views.ddecrypt, name="decrypted")
 ]

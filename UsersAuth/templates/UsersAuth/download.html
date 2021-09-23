@@ -3,17 +3,56 @@
 
 {% block content %}
 <style>
-    h1, h3, a, input  {color : white}
+    h1, h3, a, input, p  {color : white;}
     input {background-color: transparent; border-color: white;border-radius: 25px; padding :6px 20px 6px 20px;}
+
+ 
+div::-webkit-scrollba {
+  background-color: transparent;
+  outline: 1px solid slategrey;
+}
+
 </style>
-<div class="container m-5">
-<h1>Download</h1>
-<form action="" methode ="POST"></form>
-<h3>File :</h3> <a href="">{{filename}}</a>
-<div style="display: inline;">
-<h3 style="display: inline;">Private Key : </h3> <input style="display: inline;" type="file" name="prvkey">
+<div class="container m-5 row">
+
+<div class="col">
+
+<h1 style="margin-bottom: 20px;"> Download</h1>
+<form action=" " method ="POST">
+
+    {% csrf_token %}
+<input type="hidden" name = "filepath" value="{{ filepath }}">
+<div style="margin-top: 10px;">
+<h3  style="display: inline;" >File :</h3  style="display: inline;" >
+<a href="{% static link %}">{{ filename }}</a>
+
+<h3  style="margin-top: 10px;"> Crypted Password  : </h3> 
+<br>
+<div style="margin-top: 10px;width: 350px; height: 80px; overflow-x: scroll; " >
+    <!-- style="width: 250px; height: 250px; overflow: scroll;" -->
+<p style="justify-self: auto;white-space:nowrap;">{{ pw }}</p>
 </div>
-<input type="submit" name="" id="" value="Décrypter">
+
+</div>
+
+<br>
+
+<div style="margin-top: 10px;">
+<h3 style="display: inline;">Private Key : </h3>  <input style="reset" type="textarea" name="prvkey">
+<br>
+<input type="submit" id="" value="Décrypter" style="position: relative;left: 40%; margin-top: 30px;">
+
+</div>
+
+</form>
+</div>
+
+
+<div class="col" style="width:50%; height : 400px; align-items: center;justify-items: center;color: white;">
+   <h3> Password </h3>
+    {{ result}}
+</div>
+
 </div>
 
 {% endblock %}
