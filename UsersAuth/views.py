@@ -187,7 +187,7 @@ def dload(request):
 			if mp == "Wrong Key" :
 				result = "Wrong Key"
 			else:
-				result = mp
+				result = mp.decode('utf-8')
 
 
 
@@ -196,7 +196,7 @@ def dload(request):
 			"filepath" : list(request.GET.keys())[0], 
 			"pw" : str(msgs.password),
 			'result' : result,
-			"mp" : str(mp.decode('utf-8')),
+			"mp" : str(result),
 				}
 			
 	
@@ -228,8 +228,11 @@ def ddecrypt(request):
 		mp = request.GET['mp']
 		filename = request.GET['filename']
 
-		print(mp)
+		if mp == "Wrong Key" :
+			return redirect("../reception/")
+
 		response = HttpResponse( content_type= '', headers={'Content-Disposition': f'attachment; filename={filename}'},)
+		print(mp.encode('utf-8') , mp, b'p+BqFc1bz]TgZLt-' )
 		decrypted = decrypt(msgs.document.path, mp.encode('utf-8'))
 		response.write(decrypted)
 	
